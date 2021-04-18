@@ -14,5 +14,5 @@ test-seq-simulator:
   script:
     - make clean
     - make VERSION=full
-    - make -C sim/ptest SIM=sim/seq/ssim
+    - make -C sim/ptest SIM=../seq/ssim
     - make -C sim/y86-code testssim
