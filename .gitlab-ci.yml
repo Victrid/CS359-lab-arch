@@ -1,0 +1,18 @@
+stages:
+  - build
+  - test
+
+build-simulator:
+  stage: build
+  script:
+    - echo "Building simulator"
+    - make -C sim clean
+    - make sim
+
+test-seq-simulator:
+  stage: test
+  script:
+    - make clean
+    - make VERSION=full
+    - make -C sim/ptest SIM=sim/seq/ssim
+    - make -C sim/y86-code testssim
