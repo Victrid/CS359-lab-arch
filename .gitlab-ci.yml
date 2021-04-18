@@ -1,6 +1,7 @@
 stages:
   - build
-  - test
+  - basic-test
+  - partA-test
 
 build-simulator:
   stage: build
@@ -10,9 +11,50 @@ build-simulator:
     - make sim
 
 test-seq-simulator:
-  stage: test
+  stage: basic-test
   script:
     - make clean
     - make VERSION=full
     - make -C sim/ptest SIM=../seq/ssim
     - make -C sim/y86-code testssim
+
+# Part A test script
+
+test-sum:
+  stage: partA-test
+  script:
+    - make clean
+    - make VERSION=full
+    - make -C sim/misc sum.yo
+    - sim/misc/yis sim/misc/sum.yo > sum.result
+    - cat sum.result
+    - grep "^%eax.*0x00000cba$" sum.result
+  rules:
+    - exists:
+      - sim/misc/sum.ys
+
+test-rsum:
+  stage: partA-test
+  script:
+    - make clean
+    - make VERSION=full
+    - make -C sim/misc rsum.yo
+    - sim/misc/yis sim/misc/rsum.yo > rsum.result
+    - cat rsum.result
+    - grep "^%eax.*0x00000cba$" rsum.result
+  rules:
+    - exists:
+      - sim/misc/rsum.ys
+
+test-copy:
+  stage: partA-test
+  script:
+    - make clean
+    - make VERSION=full
+    - make -C sim/misc copy.yo
+    - sim/misc/yis sim/misc/copy.yo > copy.result
+    - cat copy.result
+    - grep "^%eax.*0x00000cba$" copy.result
+  rules:
+    - exists:
+      - sim/misc/copy.ys
