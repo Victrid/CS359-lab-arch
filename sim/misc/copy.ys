@@ -1,0 +1,73 @@
+/* copy.ys */
+	.pos 0
+init:
+	irmovl Stack, %esp
+	irmovl Stack, %ebp
+	call Main
+	halt
+
+# Sample structure
+	.align 4
+list:
+	.long 0x00a
+	.long 0x0b0
+	.long 0xc00
+
+Main:
+	pushl %ebp
+	rrmovl %esp, %ebp
+	irmovl list, %edx
+	pushl %edx
+	irmovl dest, %edx
+	pushl %edx
+	irmovl $3, %edx
+	pushl %edx
+	call copy		# copy (list, dest, 3)
+	rrmovl %ebp, %esp
+	popl %ebp
+	ret
+
+copy: 
+	pushl %ebp
+	rrmovl %esp, %ebp
+	xorl %eax,%eax		# result = eax = 0
+	mrmovl 8(%ebp),%edx	# edx = 3
+	mrmovl 12(%ebp), %ecx	# ecx = dest
+	mrmovl 16(%ebp), %ebx	# ebx = list
+	pushl %eax		# push result
+	pushl %edx		# push len
+	jmp whileend		# start while loop
+
+whilestart:
+	popl %eax		#
+	pushl %edx		# Swap eax and edx in stack	
+	pushl %eax		#	
+	mrmovl 0(%ebx), %eax	# eax = list
+	rmmovl %eax, 0(%ecx)	# dest = eax
+	irmovl $4, %edx
+	addl %edx, %ebx		# list += 4
+	addl %edx, %ecx		# dest += 4
+	popl %edx		# edx = result
+	xorl %edx, %eax		# eax = result ^ eax
+	popl %edx		#
+	pushl %eax		#
+	irmovl $-1, %eax	# swap eax and edx in stack
+	addl %eax, %edx		# len --
+	pushl %edx		# push len and result
+
+whileend: 
+	popl %edx
+	xorl %eax, %eax
+	subl %edx, %eax
+	jl whilestart
+
+	popl %eax
+	rrmovl %ebp, %esp
+	popl %ebp
+	ret
+
+	.pos 0x200
+Stack:
+
+	.pos 0x300
+dest:
