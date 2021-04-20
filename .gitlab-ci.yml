@@ -126,7 +126,7 @@ test-ncopy-correctness:
   script:
     - make clean
     - make VERSION=full
-    - sim/pipe/correctness.pl
+    - ( cd sim/pipe; ./correctness.pl )
 
 opt_test-ncopy-iaddl:
   stage: partC-test
@@ -157,7 +157,7 @@ test-ncopy-psim:
   script:
     - make clean
     - make VERSION=full
-    - sim/pipe/correctness.pl -p
+    - ( cd sim/pipe; ./correctness.pl -p )
 
 test-benchmark:
   stage: partC-test
