@@ -24,15 +24,15 @@ all: $(YOFILES)
 test: testpsim testssim testssim+
 
 testpsim: $(PIPEFILES)
-	grep "ISA Check" *.pipe
+	./testscript.sh *.pipe
 	rm $(PIPEFILES)
 
 testssim: $(SEQFILES)
-	grep "ISA Check" *.seq
+	./testscript.sh *.seq
 	rm $(SEQFILES)
 
 testssim+: $(SEQ+FILES)
-	grep "ISA Check" *.seq+
+	./testscript.sh *.seq+
 	rm $(SEQ+FILES)
 
 .ys.yo:

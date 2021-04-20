@@ -2,21 +2,30 @@ stages:
   - build
   - basic-test
   - partA-test
+  - partB-test
+  - partC-test
 
 build-simulator:
   stage: build
   script:
-    - echo "Building simulator"
-    - make -C sim clean
-    - make sim
+    - make clean
+    - make VERSION=full
 
 test-seq-simulator:
   stage: basic-test
   script:
     - make clean
-    - make VERSION=full
+    - make sim VERSION=full
     - make -C sim/ptest SIM=../seq/ssim
     - make -C sim/y86-code testssim
+
+test-pipe-simulator:
+  stage: basic-test
+  script:
+    - make clean
+    - make sim VERSION=full
+    - make -C sim/ptest SIM=../pipe/psim
+    - make -C sim/y86-code testpsim
 
 # Part A test script
 
@@ -58,3 +67,137 @@ test-copy:
   rules:
     - exists:
       - sim/misc/copy.ys
+
+# part B test script
+
+test-asumi:
+  stage: partB-test
+  script:
+    - make clean
+    - make VERSION=full
+    - sim/seq/ssim -t sim/y86-code/asumi.yo > asumi.result
+    - sim/y86-code/testscript.sh asumi.result
+  rules:
+    - changes:
+      - sim/seq/seq-full.hcl
+
+test-asuml:
+  stage: partB-test
+  script:
+    - make clean
+    - make VERSION=full
+    - sim/seq/ssim -t sim/y86-code/asuml.yo > asuml.result
+    - sim/y86-code/testscript.sh asuml.result
+  rules:
+    - changes:
+      - sim/seq/seq-full.hcl
+
+test-benchmark-i:
+  stage: partB-test
+  script:
+    - make clean
+    - make VERSION=full
+    - make -C sim/ptest SIM=../seq/ssim TFLAGS=-i
+  rules:
+    - changes:
+      - sim/seq/seq-full.hcl
+
+test-benchmark-l:
+  stage: partB-test
+  script:
+    - make clean
+    - make VERSION=full
+    - make -C sim/ptest SIM=../seq/ssim TFLAGS=-l
+  rules:
+    - changes:
+      - sim/seq/seq-full.hcl
+      
+# part C test script
+
+test-ncopy-compile:
+  stage: partC-test
+  script:
+    - make clean
+    - make VERSION=full
+    - sim/misc/yis sim/pipe/sdriver.yo
+
+test-ncopy-correctness:
+  stage: partC-test
+  script:
+    - make clean
+    - make VERSION=full
+    - sim/pipe/correctness.pl
+
+opt_test-ncopy-iaddl:
+  stage: partC-test
+  script:
+    - make clean
+    - make VERSION=full
+    - make -C sim/ptest SIM=../pipe/psim TFLAGS=-i
+  rules:
+    - changes:
+      - sim/pipe/ncopy.ys
+      - sim/pipe/pipe-full.hcl
+      allow_failure: true
+
+opt_test-ncopy-leave:
+  stage: partC-test
+  script:
+    - make clean
+    - make VERSION=full
+    - make -C sim/ptest SIM=../pipe/psim TFLAGS=-l
+  rules:
+    - changes:
+      - sim/pipe/ncopy.ys
+      - sim/pipe/pipe-full.hcl
+      allow_failure: true
+
+test-ncopy-psim:
+  stage: partC-test
+  script:
+    - make clean
+    - make VERSION=full
+    - sim/pipe/correctness.pl -p
+
+test-benchmark:
+  stage: partC-test
+  script:
+    - make clean
+    - make VERSION=full
+    - ( cd sim/pipe; ./benchmark.pl -t 0 )
+
+test-benchmark-baseline:
+  stage: partC-test
+  script:
+    - make clean
+    - make VERSION=full
+    - ( cd sim/pipe; ./benchmark.pl -t 0.1 )
+  rules:
+    - changes:
+      - sim/pipe/ncopy.ys
+      - sim/pipe/pipe-full.hcl
+      allow_failure: true
+      
+test-benchmark-30p:
+  stage: partC-test
+  script:
+    - make clean
+    - make VERSION=full
+    - ( cd sim/pipe; ./benchmark.pl -t 30.0 )
+  rules:
+    - changes:
+      - sim/pipe/ncopy.ys
+      - sim/pipe/pipe-full.hcl
+      allow_failure: true
+
+test-benchmark-fullscore:
+  stage: partC-test
+  script:
+    - make clean
+    - make VERSION=full
+    - ( cd sim/pipe; ./benchmark.pl -t 60.0 )
+  rules:
+    - changes:
+      - sim/pipe/ncopy.ys
+      - sim/pipe/pipe-full.hcl
+      allow_failure: true

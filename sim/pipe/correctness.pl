@@ -119,7 +119,7 @@ for ($i = 0; $i <= $blocklen+$over; $i++) {
     if ($stat =~ "cccc") {
 	$result = "Program too long";
 	printf "%d\t%s\n", $len, $result;
-	exit(0);
+	exit(1);
     }
     if ($stat =~ "dddd") {
 	$result = "Incorrect copying";
@@ -134,6 +134,7 @@ for ($i = 0; $i <= $blocklen+$over; $i++) {
 
 $bp1 = $blocklen+$over+1;
 printf "$goodcnt/$bp1 pass correctness test\n";
+exit($goodcnt-$bp1);
 
 
 

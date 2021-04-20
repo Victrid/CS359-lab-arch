@@ -35,10 +35,11 @@ sub usage {
     print STDERR "   -q      Quiet mode (default verbose)\n";
     print STDERR "   -n N    Set max number of elements up to 64 (default $blocklen)\n";
     print STDERR "   -f FILE Input .ys file is FILE\n";
+    print STDERR "   -t MIN  minimum tolerance score\n";
     die "\n";
 }
 
-getopts('hqn:f:');
+getopts('hqn:f:t:');
 
 if ($opt_h) {
     usage();
@@ -63,6 +64,16 @@ if (!$opt_f) {
     $ncopy = $opt_f;
     # Strip off .ys
     $ncopy =~ s/\.ys//;
+}
+
+if (!$opt_t) {
+    $tolr = 0;
+} else {
+    $tolr = $opt_t;
+    if ($tolr < 0 || $tolr >= 60) {
+    print STDERR "MIN must be between 0 and 60\n";
+	die "\n";
+	}
 }
 
 if ($verbose) {
@@ -108,4 +119,9 @@ if ($acpe <= $fullcpe) {
     $score = $totalpoints * ($threshcpe - $acpe)/($threshcpe - $fullcpe);
 }
 printf "Score\t%.1f/%.1f\n", $score, $totalpoints;
+if ( $score < $tolr ){
+    exit(1);
+} else {
+    exit(0);
+}
 
