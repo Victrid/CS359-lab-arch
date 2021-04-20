@@ -132,6 +132,12 @@ sub test_stat
 	    print "   $pecount/$tcount Performance Checks Failed\n";
 	}
     }
+    # used for gitlab checking
+    if($ecount + $pecount != 0) {
+        exit 1
+    } else {
+        exit 0
+    }
 }
 
 sub cmdline {
