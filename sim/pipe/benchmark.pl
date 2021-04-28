@@ -70,7 +70,7 @@ if (!$opt_t) {
     $tolr = 0;
 } else {
     $tolr = $opt_t;
-    if ($tolr < 0 || $tolr >= 60) {
+    if ($tolr < 0 || $tolr > 60) {
     print STDERR "MIN must be between 0 and 60\n";
 	die "\n";
 	}
