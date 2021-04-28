@@ -78,7 +78,8 @@ test-asumi:
     - sim/seq/ssim -t sim/y86-code/asumi.yo > asumi.result
     - sim/y86-code/testscript.sh asumi.result
   rules:
-    - changes:
+    - if: '($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH) || $CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
       - sim/seq/seq-full.hcl
 
 test-asuml:
@@ -89,7 +90,8 @@ test-asuml:
     - sim/seq/ssim -t sim/y86-code/asuml.yo > asuml.result
     - sim/y86-code/testscript.sh asuml.result
   rules:
-    - changes:
+    - if: '($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH) || $CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
       - sim/seq/seq-full.hcl
 
 test-benchmark-i:
@@ -99,7 +101,8 @@ test-benchmark-i:
     - make VERSION=full
     - make -C sim/ptest SIM=../seq/ssim TFLAGS=-i
   rules:
-    - changes:
+    - if: '($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH) || $CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
       - sim/seq/seq-full.hcl
 
 test-benchmark-l:
@@ -109,7 +112,8 @@ test-benchmark-l:
     - make VERSION=full
     - make -C sim/ptest SIM=../seq/ssim TFLAGS=-l
   rules:
-    - changes:
+    - if: '($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH) || $CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
       - sim/seq/seq-full.hcl
       
 # part C test script
@@ -135,7 +139,8 @@ opt_test-ncopy-iaddl:
     - make VERSION=full
     - make -C sim/ptest SIM=../pipe/psim TFLAGS=-i
   rules:
-    - changes:
+    - if: '($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH) || $CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
       - sim/pipe/ncopy.ys
       - sim/pipe/pipe-full.hcl
       allow_failure: true
@@ -147,7 +152,8 @@ opt_test-ncopy-leave:
     - make VERSION=full
     - make -C sim/ptest SIM=../pipe/psim TFLAGS=-l
   rules:
-    - changes:
+    - if: '($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH) || $CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
       - sim/pipe/ncopy.ys
       - sim/pipe/pipe-full.hcl
       allow_failure: true
@@ -173,7 +179,8 @@ test-benchmark-baseline:
     - make VERSION=full
     - ( cd sim/pipe; ./benchmark.pl -t 0.1 )
   rules:
-    - changes:
+    - if: '($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH) || $CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
       - sim/pipe/ncopy.ys
       - sim/pipe/pipe-full.hcl
       allow_failure: true
@@ -185,7 +192,8 @@ test-benchmark-30p:
     - make VERSION=full
     - ( cd sim/pipe; ./benchmark.pl -t 30.0 )
   rules:
-    - changes:
+    - if: '($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH) || $CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
       - sim/pipe/ncopy.ys
       - sim/pipe/pipe-full.hcl
       allow_failure: true
@@ -197,7 +205,8 @@ test-benchmark-fullscore:
     - make VERSION=full
     - ( cd sim/pipe; ./benchmark.pl -t 60.0 )
   rules:
-    - changes:
+    - if: '($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH) || $CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
       - sim/pipe/ncopy.ys
       - sim/pipe/pipe-full.hcl
       allow_failure: true
