@@ -25,15 +25,34 @@ ncopy:	pushl %ebp		# Save old frame pointer
 	xorl %eax,%eax		# count = 0;
 	andl %edx,%edx		# len <= 0?
 	jle Done		# if so, goto Done:
-
-Loop:	mrmovl (%ebx), %esi	# read val from src...
-    iaddl $4, %ebx		# src++ filling the bubble
+	
+	irmovl $1, %esi
+	andl %edx, %esi  # even number?
+	je Loop          # if so, goto Loop:
+	mrmovl (%ebx), %esi	# read val from src...
+	iaddl $4, %ebx		# src++ filling the bubble
 	rmmovl %esi, (%ecx)	# ...and store it to dst
 	andl %esi, %esi		# val <= 0?
-	jle Npos		# if so, goto Npos:
+	jle N1		# if so, goto N1:
 	iaddl $1, %eax		# count++
-Npos: iaddl $4, %ecx		# dst++
-	iaddl $-1, %edx		# len-- > 0?
+	
+N1: iaddl $4, %ecx		# dst++
+	iaddl $-1, %edx		# len-- <= 0?
+	jle Done			# if so, goto Done:
+
+Loop:	mrmovl (%ebx), %esi	# read val from src...
+    iaddl $8, %ebx		# src++ filling the bubble
+	rmmovl %esi, (%ecx)	# ...and store it to dst
+	andl %esi, %esi		# val <= 0?
+	jle Nposa		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+Nposa: mrmovl -4(%ebx), %esi	# read val from src...
+    iaddl $8, %ecx		# dst++ filling the bubble
+    rmmovl %esi, -4(%ecx)	# ...and store it to dst
+    andl %esi, %esi		# val <= 0?
+	jle Nposb		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+Nposb: iaddl $-2, %edx		# len-=2 > 0?
 	jg Loop			# if so, goto Loop:
 ##################################################################
 # Do not modify the following section of code
