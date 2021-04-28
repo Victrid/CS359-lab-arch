@@ -145,19 +145,6 @@ opt_test-ncopy-iaddl:
       - sim/pipe/pipe-full.hcl
       allow_failure: true
 
-opt_test-ncopy-leave:
-  stage: partC-test
-  script:
-    - make clean
-    - make VERSION=full
-    - make -C sim/ptest SIM=../pipe/psim TFLAGS=-l
-  rules:
-    - if: '($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH) || $CI_PIPELINE_SOURCE == "merge_request_event"'
-      changes:
-      - sim/pipe/ncopy.ys
-      - sim/pipe/pipe-full.hcl
-      allow_failure: true
-
 test-ncopy-psim:
   stage: partC-test
   script:

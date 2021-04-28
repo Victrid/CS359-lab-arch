@@ -25,16 +25,118 @@ ncopy:	pushl %ebp		# Save old frame pointer
 	xorl %eax,%eax		# count = 0;
 	andl %edx,%edx		# len <= 0?
 	jle Done		# if so, goto Done:
-
-Loop:	mrmovl (%ebx), %esi	# read val from src...
-    iaddl $4, %ebx		# src++ filling the bubble
+	
+	irmovl $1, %esi
+	andl %edx, %esi  # even number?
+	je Twom          # if not so, goto Twom:
+	
+	mrmovl (%ebx), %esi	# read val from src...
+	iaddl $4, %ebx		# src++ filling the bubble
 	rmmovl %esi, (%ecx)	# ...and store it to dst
 	andl %esi, %esi		# val <= 0?
-	jle Npos		# if so, goto Npos:
+	jle N1		# if so, goto N1:
 	iaddl $1, %eax		# count++
-Npos: iaddl $4, %ecx		# dst++
-	iaddl $-1, %edx		# len-- > 0?
-	jg Loop			# if so, goto Loop:
+N1: iaddl $4, %ecx		# dst++
+	iaddl $-1, %edx		# len-- <= 0?
+	jle Done			# if so, goto Done:
+	
+Twom: irmovl $2, %esi
+	andl %edx, %esi  # 2 mod 4 number?
+	je Fourm         # if not so, goto Fourm:
+	
+	mrmovl (%ebx), %esi	# read val from src...
+    iaddl $8, %ebx		# src++ filling the bubble
+	rmmovl %esi, (%ecx)	# ...and store it to dst
+	andl %esi, %esi		# val <= 0?
+	jle N2		# if so, goto N2:
+	iaddl $1, %eax		# count++
+N2: mrmovl -4(%ebx), %esi	# read val from src...
+    iaddl $8, %ecx		# dst++ filling the bubble
+    rmmovl %esi, -4(%ecx)	# ...and store it to dst
+    andl %esi, %esi		# val <= 0?
+	jle N3		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N3: iaddl $-2, %edx		# len-=2 <= 0?
+	jle Done			# if so, goto Done:
+
+Fourm: irmovl $4, %esi
+    andl %edx, %esi  # 2 mod 4 number?
+	je Eightm         # if not so, goto Fourm:
+    
+    pushl %edx
+    mrmovl (%ebx), %esi	# read val from src...
+    mrmovl 4(%ebx), %edx	# read val from src...
+	rmmovl %esi, (%ecx)	# ...and store it to dst
+	rmmovl %edx, 4(%ecx)	# ...and store it to dst
+	andl %esi, %esi		# val <= 0?
+	jle N4		# if so, goto N4:
+	iaddl $1, %eax		# count++
+N4: 	andl %edx, %edx		# val <= 0?
+	jle N5		# if so, goto N5:
+	iaddl $1, %eax		# count++
+N5: mrmovl 8(%ebx), %esi	# read val from src...
+    mrmovl 12(%ebx), %edx	# read val from src...
+	rmmovl %esi, 8(%ecx)	# ...and store it to dst
+	rmmovl %edx, 12(%ecx)	# ...and store it to dst
+    andl %esi, %esi		# val <= 0?
+	jle N6		# if so, goto N6:
+	iaddl $1, %eax		# count++
+N6: 	andl %edx, %edx		# val <= 0?
+	jle N7		# if so, goto N7:
+	iaddl $1, %eax		# count++
+N7: popl %edx
+    iaddl $16, %ebx		# ebx++
+    iaddl $16, %ecx		# ecx++
+    iaddl $-4, %edx		# len-=4 <= 0?
+	jle Done			# if so, goto Done:
+
+Eightm: 
+    pushl %edx
+    mrmovl (%ebx), %esi	# read val from src...
+    mrmovl 4(%ebx), %edx	# read val from src...
+	rmmovl %esi, (%ecx)	# ...and store it to dst
+	rmmovl %edx, 4(%ecx)	# ...and store it to dst
+	andl %esi, %esi		# val <= 0?
+	jle N8		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+N8: 	andl %edx, %edx		# val <= 0?
+	jle N9		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N9: mrmovl 8(%ebx), %esi	# read val from src...
+    mrmovl 12(%ebx), %edx	# read val from src...
+	rmmovl %esi, 8(%ecx)	# ...and store it to dst
+	rmmovl %edx, 12(%ecx)	# ...and store it to dst
+    andl %esi, %esi		# val <= 0?
+	jle N10		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+N10: 	andl %edx, %edx		# val <= 0?
+	jle N11		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N11: mrmovl 16(%ebx), %esi	# read val from src...
+    mrmovl 20(%ebx), %edx	# read val from src...
+	rmmovl %esi, 16(%ecx)	# ...and store it to dst
+	rmmovl %edx, 20(%ecx)	# ...and store it to dst
+	andl %esi, %esi		# val <= 0?
+	jle N12		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+N12: 	andl %edx, %edx		# val <= 0?
+	jle N13		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N13: mrmovl 24(%ebx), %esi	# read val from src...
+    mrmovl 28(%ebx), %edx	# read val from src...
+	rmmovl %esi, 24(%ecx)	# ...and store it to dst
+	rmmovl %edx, 28(%ecx)	# ...and store it to dst
+    andl %esi, %esi		# val <= 0?
+	jle N14		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+N14: 	andl %edx, %edx		# val <= 0?
+	jle N15		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N15: popl %edx
+    iaddl $32, %ebx		# ebx++
+    iaddl $32, %ecx		# ecx++
+    iaddl $-8, %edx		# len-=8 > 0?
+	jg Eightm			# if so, goto Loop:
 ##################################################################
 # Do not modify the following section of code
 # Function epilogue.
