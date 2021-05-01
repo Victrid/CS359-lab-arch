@@ -1,0 +1,47 @@
+#Name:WantingLi
+#Student ID: 519030910210
+
+#Execution begins at address 0
+	.pos	0
+init:
+	irmovl	Stack,	%esp		# Set up stack pointer
+	rrmovl	%esp ,	%ebp		# Set up base pointer
+	irmovl	ele1,	%eax
+	pushl	%eax
+	call	sumlist			# Execute main program
+	halt				# Terminate program
+
+# Sample linked list
+	.align	4
+ele1:
+	.long	0x00a
+	.long	ele2
+ele2:
+	.long	0x0b0
+	.long	ele3
+ele3:
+	.long	0xc00
+	.long	0
+
+# int sum_list(list_ptr ls)
+sumlist:	
+	pushl 	%ebp			# save a copy of Main's ebp	
+	rrmovl 	%esp ,	%ebp		# initialize frame
+	xorl 	%eax ,	%eax		# clear %eax
+	mrmovl	8(%ebp),%edx 		# %edx = ls
+	andl	%edx,	%edx		# ls ?= 0
+	je	End			# if(ls == 0) goto End
+Loop:
+	mrmovl	(%edx),	%ecx		# tmp = ls->val
+	addl	%ecx ,	%eax		# val += tmp
+	mrmovl	4(%edx),%edx		# ls = ls->next
+	andl	%edx,	%edx
+	jne	Loop			# if edx == 0 break
+End:
+	rrmovl 	%ebp ,	%esp		# resume the esp and ebp of Main
+	popl 	%ebp
+	ret
+
+# Stack
+	.pos 0x100
+Stack:
