@@ -17,3 +17,9 @@ Score  51.1/60.0
 Expanding loop by 8: Average CPE   9.79 
 Score  60.0/60.0
 
+Expanding loop by 16 (with `leave` instructions): Average CPE   9.63 
+Score  60.0/60.0
+
+Finding that we have an extra `%edi` register at our disposal, then we do not need a `pop / push`: Average CPE   9.45 
+Score  60.0/60.0
+

@@ -63,80 +63,169 @@ Fourm: irmovl $4, %esi
     andl %edx, %esi  # 2 mod 4 number?
 	je Eightm         # if not so, goto Fourm:
     
-    pushl %edx
     mrmovl (%ebx), %esi	# read val from src...
-    mrmovl 4(%ebx), %edx	# read val from src...
+    mrmovl 4(%ebx), %edi	# read val from src...
 	rmmovl %esi, (%ecx)	# ...and store it to dst
-	rmmovl %edx, 4(%ecx)	# ...and store it to dst
+	rmmovl %edi, 4(%ecx)	# ...and store it to dst
 	andl %esi, %esi		# val <= 0?
 	jle N4		# if so, goto N4:
 	iaddl $1, %eax		# count++
-N4: 	andl %edx, %edx		# val <= 0?
+N4: 	andl %edi, %edi		# val <= 0?
 	jle N5		# if so, goto N5:
 	iaddl $1, %eax		# count++
 N5: mrmovl 8(%ebx), %esi	# read val from src...
-    mrmovl 12(%ebx), %edx	# read val from src...
+    mrmovl 12(%ebx), %edi	# read val from src...
 	rmmovl %esi, 8(%ecx)	# ...and store it to dst
-	rmmovl %edx, 12(%ecx)	# ...and store it to dst
+	rmmovl %edi, 12(%ecx)	# ...and store it to dst
     andl %esi, %esi		# val <= 0?
 	jle N6		# if so, goto N6:
 	iaddl $1, %eax		# count++
-N6: 	andl %edx, %edx		# val <= 0?
+N6: 	andl %edi, %edi		# val <= 0?
 	jle N7		# if so, goto N7:
 	iaddl $1, %eax		# count++
-N7: popl %edx
+N7: 
     iaddl $16, %ebx		# ebx++
     iaddl $16, %ecx		# ecx++
     iaddl $-4, %edx		# len-=4 <= 0?
 	jle Done			# if so, goto Done:
 
-Eightm: 
-    pushl %edx
+Eightm: irmovl $8, %esi
+    andl %edx, %esi  # 4 mod 8 number?
+	je Hexm         # if not so, goto Fourm:
+	
+    
     mrmovl (%ebx), %esi	# read val from src...
-    mrmovl 4(%ebx), %edx	# read val from src...
+    mrmovl 4(%ebx), %edi	# read val from src...
 	rmmovl %esi, (%ecx)	# ...and store it to dst
-	rmmovl %edx, 4(%ecx)	# ...and store it to dst
+	rmmovl %edi, 4(%ecx)	# ...and store it to dst
 	andl %esi, %esi		# val <= 0?
 	jle N8		# if so, goto Nposa:
 	iaddl $1, %eax		# count++
-N8: 	andl %edx, %edx		# val <= 0?
+N8: 	andl %edi, %edi		# val <= 0?
 	jle N9		# if so, goto Nposb:
 	iaddl $1, %eax		# count++
 N9: mrmovl 8(%ebx), %esi	# read val from src...
-    mrmovl 12(%ebx), %edx	# read val from src...
+    mrmovl 12(%ebx), %edi	# read val from src...
 	rmmovl %esi, 8(%ecx)	# ...and store it to dst
-	rmmovl %edx, 12(%ecx)	# ...and store it to dst
+	rmmovl %edi, 12(%ecx)	# ...and store it to dst
     andl %esi, %esi		# val <= 0?
 	jle N10		# if so, goto Nposa:
 	iaddl $1, %eax		# count++
-N10: 	andl %edx, %edx		# val <= 0?
+N10: 	andl %edi, %edi		# val <= 0?
 	jle N11		# if so, goto Nposb:
 	iaddl $1, %eax		# count++
 N11: mrmovl 16(%ebx), %esi	# read val from src...
-    mrmovl 20(%ebx), %edx	# read val from src...
+    mrmovl 20(%ebx), %edi	# read val from src...
 	rmmovl %esi, 16(%ecx)	# ...and store it to dst
-	rmmovl %edx, 20(%ecx)	# ...and store it to dst
+	rmmovl %edi, 20(%ecx)	# ...and store it to dst
 	andl %esi, %esi		# val <= 0?
 	jle N12		# if so, goto Nposa:
 	iaddl $1, %eax		# count++
-N12: 	andl %edx, %edx		# val <= 0?
+N12: 	andl %edi, %edi		# val <= 0?
 	jle N13		# if so, goto Nposb:
 	iaddl $1, %eax		# count++
 N13: mrmovl 24(%ebx), %esi	# read val from src...
-    mrmovl 28(%ebx), %edx	# read val from src...
+    mrmovl 28(%ebx), %edi	# read val from src...
 	rmmovl %esi, 24(%ecx)	# ...and store it to dst
-	rmmovl %edx, 28(%ecx)	# ...and store it to dst
+	rmmovl %edi, 28(%ecx)	# ...and store it to dst
     andl %esi, %esi		# val <= 0?
 	jle N14		# if so, goto Nposa:
 	iaddl $1, %eax		# count++
-N14: 	andl %edx, %edx		# val <= 0?
+N14: 	andl %edi, %edi		# val <= 0?
 	jle N15		# if so, goto Nposb:
 	iaddl $1, %eax		# count++
-N15: popl %edx
+N15: 
     iaddl $32, %ebx		# ebx++
     iaddl $32, %ecx		# ecx++
     iaddl $-8, %edx		# len-=8 > 0?
-	jg Eightm			# if so, goto Loop:
+	jle Done			# if so, goto Done:
+
+Hexm: 
+    mrmovl (%ebx), %esi	# read val from src...
+    mrmovl 4(%ebx), %edi	# read val from src...
+	rmmovl %esi, (%ecx)	# ...and store it to dst
+	rmmovl %edi, 4(%ecx)	# ...and store it to dst
+	andl %esi, %esi		# val <= 0?
+	jle N16		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+N16: 	andl %edi, %edi		# val <= 0?
+	jle N17		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N17: mrmovl 8(%ebx), %esi	# read val from src...
+    mrmovl 12(%ebx), %edi	# read val from src...
+	rmmovl %esi, 8(%ecx)	# ...and store it to dst
+	rmmovl %edi, 12(%ecx)	# ...and store it to dst
+    andl %esi, %esi		# val <= 0?
+	jle N18		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+N18: 	andl %edi, %edi		# val <= 0?
+	jle N19		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N19: mrmovl 16(%ebx), %esi	# read val from src...
+    mrmovl 20(%ebx), %edi	# read val from src...
+	rmmovl %esi, 16(%ecx)	# ...and store it to dst
+	rmmovl %edi, 20(%ecx)	# ...and store it to dst
+	andl %esi, %esi		# val <= 0?
+	jle N20		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+N20: 	andl %edi, %edi		# val <= 0?
+	jle N21		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N21: mrmovl 24(%ebx), %esi	# read val from src...
+    mrmovl 28(%ebx), %edi	# read val from src...
+	rmmovl %esi, 24(%ecx)	# ...and store it to dst
+	rmmovl %edi, 28(%ecx)	# ...and store it to dst
+    andl %esi, %esi		# val <= 0?
+	jle N22		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+N22: 	andl %edi, %edi		# val <= 0?
+	jle N23		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N23: mrmovl 32(%ebx), %esi	# read val from src...
+    mrmovl 36(%ebx), %edi	# read val from src...
+	rmmovl %esi, 32(%ecx)	# ...and store it to dst
+	rmmovl %edi, 36(%ecx)	# ...and store it to dst
+	andl %esi, %esi		# val <= 0?
+	jle N24		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+N24: 	andl %edi, %edi		# val <= 0?
+	jle N25		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N25: mrmovl 40(%ebx), %esi	# read val from src...
+    mrmovl 44(%ebx), %edi	# read val from src...
+	rmmovl %esi, 40(%ecx)	# ...and store it to dst
+	rmmovl %edi, 44(%ecx)	# ...and store it to dst
+    andl %esi, %esi		# val <= 0?
+	jle N26		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+N26: 	andl %edi, %edi		# val <= 0?
+	jle N27		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N27: mrmovl 48(%ebx), %esi	# read val from src...
+    mrmovl 52(%ebx), %edi	# read val from src...
+	rmmovl %esi, 48(%ecx)	# ...and store it to dst
+	rmmovl %edi, 52(%ecx)	# ...and store it to dst
+	andl %esi, %esi		# val <= 0?
+	jle N28		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+N28: 	andl %edi, %edi		# val <= 0?
+	jle N29		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N29: mrmovl 56(%ebx), %esi	# read val from src...
+    mrmovl 60(%ebx), %edi	# read val from src...
+	rmmovl %esi, 56(%ecx)	# ...and store it to dst
+	rmmovl %edi, 60(%ecx)	# ...and store it to dst
+    andl %esi, %esi		# val <= 0?
+	jle N30		# if so, goto Nposa:
+	iaddl $1, %eax		# count++
+N30: 	andl %edi, %edi		# val <= 0?
+	jle N31		# if so, goto Nposb:
+	iaddl $1, %eax		# count++
+N31: 
+    iaddl $64, %ebx		# ebx++
+    iaddl $64, %ecx		# ecx++
+    iaddl $-16, %edx		# len-=8 > 0?
+    jg Hexm
 ##################################################################
 # Do not modify the following section of code
 # Function epilogue.
@@ -144,8 +233,7 @@ Done:
 	popl %edi               # Restore callee-save registers
 	popl %ebx
 	popl %esi
-	rrmovl %ebp, %esp
-	popl %ebp
+	leave
 	ret
 ##################################################################
 # Keep the following label at the end of your function
