@@ -11,7 +11,7 @@ TEAM = bovik
 HANDINDIR-PARTA = StudentID/handin-parta
 HANDINDIR-PARTB = StudentID/handin-partb
 HANDINDIR-PARTC = StudentID/handin-partc
-.PHONY: sim
+.PHONY: sim report
 sim:
 	+make -C sim
 
@@ -32,7 +32,9 @@ handin-partc:
 
 clean:
 	+make -C sim clean
+	+make -C report clean
 	rm -f *~ *.o
 
-
+report:
+	+make -C report
 
